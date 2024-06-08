@@ -1,0 +1,55 @@
+[[extend 'layout.html']]
+
+<style>
+[v-cloak] {
+     display: none;
+}
+</style>
+
+
+<div class="section" id="app" v-cloak>
+  <!-- Put here your Vue.js template -->
+  <h1 class="title">Index</h1>
+  <p>Welcome to birdwatching.html, to get started you can select a rectangular region on the map by clikcing two points.
+     Once you have your region selected you can press the the "statistics on region" button see the statistics of birdsightings
+     on that reigion.</p>
+
+  <div id="map"></div>
+
+  <p>You can select what species are shown on the map.</p>
+  <div class="container">
+    <p>You selected species:</p>
+    <li v-for="name in selectedCNames">{{name}}<i class="delete-button has-text-danger fa fa-trash" @click="deleteSelectedSpecies(name)"></i></li>
+  </div>
+  
+
+  <div class="container">
+    <input class="input" type="text" placeholder="Enter a Common Name" v-model='searchCName' @input="filterCommonNames()" @focus="displaySuggestions = true"></input>
+    <div v-if="filteredCNames && displaySuggestions">
+      <ul>
+        <li v-for="cName in filteredCNames" @click="setSeachCName(cName)">
+          <button class="button is-white" @click="editSelectedSpecies(cName)">
+            {{cName}}
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+</div>
+
+
+
+
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script>
+  let load_data_url = "[[=XML(load_data_url)]]";
+</script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"></script>
+<script src="js/index.js"></script>
+<script src="js/leaflet-heat.js"></script>
+
+[[end]]
