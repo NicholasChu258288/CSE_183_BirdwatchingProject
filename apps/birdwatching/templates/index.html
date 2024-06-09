@@ -12,7 +12,7 @@
   <h1 class="title">Index</h1>
 
   <h2>Navigation</h2>
-  <button class="button is-primary" @click="enterChecklist">enter checklist</button>
+  <button class="button is-primary" @click="enterChecklist">Checklist</button>
   <br>
 
   <div class="container">
@@ -28,7 +28,7 @@
   <br>
 
   <div class="box">
-    <p>You can select what species are shown on the map.</p>
+    <p>You can select what species are shown on the map. The map will only update after hovering over it again.</p>
     <p>You selected species:</p>
     <ul>
       <li v-for="name in selectedCNames">{{name}}<i class="delete-button has-text-danger fa fa-trash" @click="deleteSelectedSpecies(name)"></i></li>
