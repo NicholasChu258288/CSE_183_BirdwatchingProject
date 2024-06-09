@@ -25,6 +25,11 @@ app.map_data = [];
 
 app.selected_species = [];
 
+app.existingHeatMaps = [];
+app.heatMapCoords = [];
+
+var heat;
+
 app.sightings_reference = {};// SpeciesName: {sampling events}
 
 app.data = {    
@@ -59,7 +64,7 @@ app.data = {
         },
         addSpeicesCommonName: function(common_name){
             let self = this;
-            self.speciesCNames.push(common_name.toLowerCase());
+            self.speciesCNames.push(common_name);
         },
         setSelectedSpecies: function(selectedSpeciesList){
             let self = this;
@@ -78,21 +83,13 @@ app.data = {
             this.displaySuggestions = false;
         },
         editSelectedSpecies: function(cName){
-            console.log("Selected: ", cName, "\n");
+            //console.log("Selected: ", cName, "\n");
             if (this.selectedCNames.includes(cName)){
-                console.log("Removed from already selected list\n");
-                let tmp = [];
-                this.selectedCNames.forEach(function(s){
-                    if (s != cName){
-                        tmp.push(s);
-                    }
-                });
-                this.selectedCNames = tmp;
-                console.log(this.selectedCNames);
+                console.log("Already in selected list\n");
             } else {
-                console.log("DNE so can push to list");
+                //console.log("DNE so can push to list");
                 this.selectedCNames.push(cName);
-                console.log(this.selectedCNames);
+                //console.log(this.selectedCNames);
             }
             app.selected_species = this.selectedCNames;
         },
@@ -141,7 +138,50 @@ app.click_listener = function (e) {
 };
 
 app.heatMap_listener = function(e) {
-    let s = app.vue.selectedSpeciesList;
+    //console.log('Heat listener called');
+    //console.log(app.sightings_reference);
+
+    if (app.existingHeatMaps.toString() != app.selected_species.toString()){
+        console.log('Need to create new heatMap');
+        //console.log(app.existingHeatMaps);
+        //console.log(app.selected_species);
+        /*
+        app.existingHeatMaps.forEach(function (i){
+            console.log(c);
+            c++
+        });
+        */
+       app.map.removeLayer(heat);
+
+
+
+        app.existingHeatMaps = [];
+        app.heatMapCoords = [];
+    
+        app.selected_species.forEach(function (i){
+            app.existingHeatMaps.push(i);
+        });
+
+        app.existingHeatMaps.forEach(function (i){
+            //app.sightings_reference;
+            //app.heatMapCoords;
+            //console.log('Species name:', i);
+            //console.log(app.sightings_reference[i]);
+
+            //Add coordinates
+            app.heatMapCoords = app.heatMapCoords.concat(app.sightings_reference[i]);
+            
+            //console.log(app.heatMapCoords);
+        });
+
+        heat = L.heatLayer(app.heatMapCoords).addTo(app.map);
+    } else {
+        console.log('No need to update heatmap');
+    }
+    
+
+    console.log("Create heat maps for:", app.existingHeatMaps);
+
 }
 
 //Create the map
@@ -159,6 +199,8 @@ app.init = () => {
     }).addTo(app.map);
 
     console.log("initializing");
+
+    heat = L.heatLayer(app.heatMapCoords).addTo(app.map);
     
     //L.marker(L.latLng(37.094464, -122)).addTo(app.map);
     
@@ -216,6 +258,7 @@ app.init = () => {
     //Listeners
     app.map.on('click', mapClick); //Should just point location
     app.map.on('click', app.click_listener); //Click test
+    app.map.on('mouseover', app.heatMap_listener);
     //console.log('Done initializing');
     //console.log(app.sightings_reference);
 }
