@@ -1,0 +1,15 @@
+
+apps/birdwatching/databases/storage.db
+apps/birdwatching/__pycache__/settings.cpython-311.pyc
+apps/birdwatching/__pycache__/models.cpython-311.pyc
+apps/birdwatching/__pycache__/controllers.cpython-311.pyc
+apps/birdwatching/__pycache__/common.cpython-311.pyc
+apps/birdwatching/__pycache__/__init__.cpython-311.pyc
+apps/__pycache__/__init__.cpython-311.pyc
+apps/.service/sql.log
+apps/.service/session.secret
+apps/.service/service.storage
+apps/.service/1562186b6a50f56664060cda865cd1bd_py4web_error.table
+apps/birdwatching/databases/storage.db
+apps/birdwatching/databases/storage.db
+apps/birdwatching/databases/storage.db
