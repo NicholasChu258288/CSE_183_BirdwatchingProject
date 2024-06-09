@@ -55,7 +55,7 @@ def checklist():
     
     return dict(
         form=form,
-        get_sightings_url = URL('get_sightings'),
+        get_species_url = URL('get_species'),
         submit_checklist_url = URL('submit_checklist')
     )
 
@@ -97,7 +97,12 @@ def get_sightings():
         return dict(sightings_list=sightings_list)
     except Exception as e:
         return dict(error=str(e))
-
+    
+@action('get_species', method=['GET'])
+@action.uses(db, auth)
+def get_speciess():
+    species_list = db(db.species).select().as_list()
+    return dict(species_list = species_list)
 
 
 @action('load_data', method='GET')

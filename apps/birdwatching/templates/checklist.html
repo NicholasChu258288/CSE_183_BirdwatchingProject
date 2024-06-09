@@ -4,7 +4,7 @@
     <h1 class="title is-2">Checklists</h1>
     <div class="field has-addons">
         <div class="control is-expanded">
-            <input class="input" v-model="searchQuery" @input="filtersightings" placeholder="Search for a sightings...">
+            <input class="input" v-model="searchQuery" @input="filterspecies" placeholder="Search for a species...">
         </div>
     </div>
     <div class="table-container" style="background-color: lightgray; padding: 10px; max-height: 400px; overflow-y: auto;">
@@ -12,24 +12,23 @@
             <thead>
                 <tr>
                     <th>Species Name</th>
-                    <th>Event ID</th>
                     <th>Number of Sightings</th>
                     <th>Add Sightings Count</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="sighting in filteredSightings" :key="sighting.COMMON_NAME">
-                    <td>{{ sighting.COMMON_NAME }}</td>
-                    <td>{{ sighting.SAMPLING_EVENT_IDENTIFIER }}</td>
-                    <td>{{ sighting.OBSERVATION_COUNT }}</td>
+                <tr v-for="species in filteredSpecies" :key="species.COMMON_NAME">
+                    <td>{{ species.COMMON_NAME }}</td>
+                    <td>{{ species.SAMPLING_EVENT_IDENTIFIER }}</td>
+                    <td>{{ species.OBSERVATION_COUNT }}</td>
                     <td>
                         <div class="field has-addons">
                             <div class="control is-expanded">
-                                <input class="input" type="number" v-model="sighting.incrementCount" min="0">
+                                <input class="input" type="number" v-model="species.incrementCount" min="0">
                             </div>
                             <div class="control">
-                                <button class="button is-success" @click="incrementCount(sighting)">Submit</button>
+                                <button class="button is-success" @click="incrementCount(species)">Submit</button>
                             </div>
                         </div>
                     </td>
@@ -48,7 +47,7 @@
 [[block page_scripts]]
   <!-- Loads the index-specific js for Vue -->
   <script>
-    let get_sightings_url = "[[=XML(get_sightings_url)]]";
+    let get_species_url = "[[=XML(get_species_url)]]";
     let submit_checklist_url = "[[=XML(submit_checklist_url)]]"
   </script>
   <script src="js/checklist.js"></script>
