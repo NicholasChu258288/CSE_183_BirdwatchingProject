@@ -17,6 +17,9 @@ app.data = {
         goToMyChecklists() {
             console.log("Pressing button");
             window.location.href = '/birdwatching/my_checklists';
+        },
+        goToIndex() {
+            window.location.href = '/birdwatching/index';
         }
     }
 };
@@ -24,7 +27,13 @@ app.data = {
 app.vue = Vue.createApp(app.data).mount("#app");
 
 app.load_data = function () {
-
+    var coord1 = localStorage.getItem('coord1');
+    var coord2 = localStorage.getItem('coord2');
+    console.log('Loading\n');
+    console.log('coord1');
+    console.log(coord1);
+    console.log('coord2');
+    console.log(coord2);
 }
 
 app.load_data();
