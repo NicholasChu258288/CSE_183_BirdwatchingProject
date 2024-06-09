@@ -1,39 +1,60 @@
 "use strict";
 
-// This will be the object that will contain the Vue attributes
-// and be used to initialize it.
-let app = {};
-
-
-app.data = {    
-    data: function() {
+let app = {
+    data() {
         return {
-            // Complete as you see fit.
-            my_value: 1,
+            searchQuery: '',
+            sightings: [],
+            filteredSightings: []
         };
     },
     methods: {
-        // Complete as you see fit.
         goToMyChecklists() {
-            console.log("Pressing button");
+            console.log("Navigating to My Checklists");
             window.location.href = '/birdwatching/my_checklists';
         },
         goToIndex() {
             window.location.href = '/birdwatching/index';
+        },
+        filtersightings() {
+            let query = this.searchQuery.trim().toLowerCase(); // Trim and convert search query to lowercase
+            this.filteredSightings = this.sightings.filter(sighting => 
+                sighting.COMMON_NAME.trim().toLowerCase().startsWith(query) // Trim and convert COMMON_NAME to lowercase
+            );
+        },
+        incrementCount(sighting) {
+            if (!sighting.incrementCount) {
+                sighting.incrementCount = 0;
+            }
+            sighting.observationCount += parseInt(sighting.incrementCount);
+            sighting.incrementCount = 0;
+        },
+        load_data() {
+            let coord1 = localStorage.getItem('coord1');
+            let coord2 = localStorage.getItem('coord2');
+            console.log('coord1', coord1);
+            console.log('coord2', coord2);
+            axios.get(get_sightings_url).then((response) => {
+                if (response.data.error) {
+                    console.error(response.data.error);
+                    return;
+                }
+                let sightings_list = response.data.sightings_list;
+                // Ignore the first entry
+                let filtered_sightings_list = sightings_list.slice(1);
+                filtered_sightings_list.forEach(sighting => {
+                    sighting.incrementCount = 0;
+                });
+                this.sightings = filtered_sightings_list;
+                this.filteredSightings = filtered_sightings_list;
+            }).catch(error => {
+                console.error(error);
+            });
         }
+    },
+    mounted() {
+        this.load_data();
     }
 };
 
-app.vue = Vue.createApp(app.data).mount("#app");
-
-app.load_data = function () {
-    var coord1 = localStorage.getItem('coord1');
-    var coord2 = localStorage.getItem('coord2');
-    console.log('Loading\n');
-    console.log('coord1');
-    console.log(coord1);
-    console.log('coord2');
-    console.log(coord2);
-}
-
-app.load_data();
+Vue.createApp(app).mount("#app");

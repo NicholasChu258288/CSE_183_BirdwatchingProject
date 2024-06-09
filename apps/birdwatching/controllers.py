@@ -53,7 +53,11 @@ def checklist():
     if form.accepted:
         redirect(URL('edit_checklist', form.vars.id))
     
-    return dict(form=form)
+    return dict(
+        form=form,
+        get_sightings_url = URL('get_sightings'),
+        submit_checklist_url = URL('submit_checklist')
+    )
 
 @action('my_checklists/<path:path>', method=['GET', 'POST'])
 @action('my_checklists', method=['GET', 'POST'])
@@ -66,6 +70,35 @@ def my_checklist(path=None):
                 )
     
     return dict(grid=grid)
+
+@action('submit_checklist', method='POST')
+@action.uses(db, auth)
+def submit_checklist():
+    data = request.json
+    if not data:
+        return dict(success=False, message="No data received")
+    
+    for item in data:
+        db.sightings.insert(
+            SAMPLING_EVENT_IDENTIFIER=item.get('SAMPLING_EVENT_IDENTIFIER'),
+            COMMON_NAME=item.get('COMMON_NAME'),
+            OBSERVATION_COUNT=item.get('observationCount')
+        )
+    
+    return dict(success=True, message="Checklist submitted successfully")
+
+@action('get_sightings', method=['GET'])
+@action.uses(db, auth)
+def get_sightings():
+    try:
+        limit = int(request.params.get('limit', 100))
+        offset = int(request.params.get('offset', 0))
+        sightings_list = db(db.sightings).select(limitby=(offset, offset + limit)).as_list()
+        return dict(sightings_list=sightings_list)
+    except Exception as e:
+        return dict(error=str(e))
+
+
 
 @action('load_data', method='GET')
 @action.uses(db, auth)

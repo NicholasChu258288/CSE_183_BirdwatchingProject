@@ -1,14 +1,55 @@
 [[extend 'layout.html']]
 
 <div class="section" id="app">
-    <!-- Put here your Vue.js template -->
-    <h1 class="title">Checklist</h1>
-    <button class="button is-primary" @click="goToMyChecklists">My Checklists</button>
-    <button class="button is-primary" @click="goToIndex">Index</button>
-</div>
-
+    <h1 class="title is-2">Checklists</h1>
+    <div class="field has-addons">
+        <div class="control is-expanded">
+            <input class="input" v-model="searchQuery" @input="filtersightings" placeholder="Search for a sightings...">
+        </div>
+    </div>
+    <div class="table-container" style="background-color: lightgray; padding: 10px; max-height: 400px; overflow-y: auto;">
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <th>Species Name</th>
+                    <th>Event ID</th>
+                    <th>Number of Sightings</th>
+                    <th>Add Sightings Count</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="sighting in filteredSightings" :key="sighting.COMMON_NAME">
+                    <td>{{ sighting.COMMON_NAME }}</td>
+                    <td>{{ sighting.SAMPLING_EVENT_IDENTIFIER }}</td>
+                    <td>{{ sighting.OBSERVATION_COUNT }}</td>
+                    <td>
+                        <div class="field has-addons">
+                            <div class="control is-expanded">
+                                <input class="input" type="number" v-model="sighting.incrementCount" min="0">
+                            </div>
+                            <div class="control">
+                                <button class="button is-success" @click="incrementCount(sighting)">Submit</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="buttons">
+        <button class="button is-info" @click="goToMyChecklists">My Checklists</button>
+        <button class="button is-primary" @click="goToIndex">Index</button>
+    </div>
+  </div>
+  
+  
 
 [[block page_scripts]]
-<!-- Loads the index-specific js for Vue -->
-<script src="js/checklist.js"></script>
+  <!-- Loads the index-specific js for Vue -->
+  <script>
+    let get_sightings_url = "[[=XML(get_sightings_url)]]";
+    let submit_checklist_url = "[[=XML(submit_checklist_url)]]"
+  </script>
+  <script src="js/checklist.js"></script>
 [[end]]
