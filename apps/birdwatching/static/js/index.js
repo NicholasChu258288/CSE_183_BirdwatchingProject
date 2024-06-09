@@ -307,6 +307,7 @@ app.load_data = function () {
 
             if (map_data_size > 0){
                 app.sightings_reference[res.sightings.COMMON_NAME].push([Number(res.checklists.LATITUDE), Number(res.checklists.LONGITUDE)]);
+                app.heatMapCoords.push([res.checklists.LATITUDE, res.checklists.LONGITUDE]);
             } else {
                 console.log(res);
             }
