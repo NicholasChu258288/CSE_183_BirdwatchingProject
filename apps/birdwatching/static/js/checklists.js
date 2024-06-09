@@ -21,7 +21,7 @@ app.data = {
     }
 };
 
-app.vue = Vue.createApp(app.data).mount("#app");
+app.vue = Vue.createApp(app.data).mount("#checklist_app");
 
 app.load_data = function () {
 

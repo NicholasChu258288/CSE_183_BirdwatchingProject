@@ -48,6 +48,9 @@ app.data = {
             this.mapLatitude = latitude;
             this.mapLongitude = longitude;
         },
+        enterChecklist() {
+            window.location.href = '/birdwatching/checklist';
+        },
         setSpeciesCommonNames: function(species_list){
             let self = this;
             species_list.forEach(function(s){

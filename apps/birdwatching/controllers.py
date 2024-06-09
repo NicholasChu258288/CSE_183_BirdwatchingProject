@@ -30,6 +30,8 @@ from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email
+from py4web.utils.form import Form, FormStyleBulma
+from py4web.utils.grid import Grid, GridClassStyleBulma
 
 url_signer = URLSigner(session)
 
@@ -39,6 +41,31 @@ def index():
     return dict(
         load_data_url = URL('load_data'),
     )
+
+@action('checklist/<location>')
+@action('checklist')
+@action.uses('checklist.html', auth.user, db)
+def checklist():
+    # user_id = auth.current_user.get('id')
+    # form = Form(db.checklists, hidden={'user_id': user_id, 'location': location}, formstyle=FormStyleBulma)
+    
+    form = Form(db.checklists, formstyle=FormStyleBulma)
+    if form.accepted:
+        redirect(URL('edit_checklist', form.vars.id))
+    
+    return dict(form=form)
+
+@action('my_checklists/<path:path>', method=['GET', 'POST'])
+@action('my_checklists', method=['GET', 'POST'])
+@action.uses('my_checklists.html', db, auth)
+def my_checklist(path=None):
+    grid = Grid(path,
+                formstyle=FormStyleBulma,
+                grid_class_style=GridClassStyleBulma,
+                query=(db.checklists.id > 0),
+                )
+    
+    return dict(grid=grid)
 
 @action('load_data', method='GET')
 @action.uses(db, auth)
