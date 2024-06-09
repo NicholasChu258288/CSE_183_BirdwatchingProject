@@ -101,8 +101,8 @@ def get_sightings():
 @action('get_species', method=['GET'])
 @action.uses(db, auth)
 def get_speciess():
-    species_list = db(db.species).select().as_list()
-    return dict(species_list = species_list)
+    species_list = db(db.species).select(orderby=db.species.COMMON_NAME)
+    return dict(species_list=species_list)
 
 
 @action('load_data', method='GET')
