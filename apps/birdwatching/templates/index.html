@@ -10,22 +10,29 @@
 <div class="section" id="app" v-cloak>
   <!-- Put here your Vue.js template -->
   <h1 class="title">Index</h1>
-  <p>Welcome to birdwatching.html, to get started you can select a rectangular region on the map by clikcing two points.
-     Once you have your region selected you can press the the "statistics on region" button see the statistics of birdsightings
-     on that reigion.</p>
 
+  <h2>Navigation</h2>
   <button class="button is-primary" @click="enterChecklist">enter checklist</button>
-  
-  <div id="map"></div>
+  <br>
 
-  <p>You can select what species are shown on the map.</p>
   <div class="container">
-    <p>You selected species:</p>
-    <li v-for="name in selectedCNames">{{name}}<i class="delete-button has-text-danger fa fa-trash" @click="deleteSelectedSpecies(name)"></i></li>
+    <p style="width:526px;">Welcome to birdwatching.html, to get started you can select a rectangular region on the map by clikcing two points.
+      Once you have your region selected you can press the the "statistics on region" button see the statistics of birdsightings
+      on that reigion.</p>
   </div>
+  <br>
   
-
   <div class="container">
+    <div id="map"></div>
+  </div>
+  <br>
+
+  <div class="box">
+    <p>You can select what species are shown on the map.</p>
+    <p>You selected species:</p>
+    <ul>
+      <li v-for="name in selectedCNames">{{name}}<i class="delete-button has-text-danger fa fa-trash" @click="deleteSelectedSpecies(name)"></i></li>
+    </ul>
     <input class="input" type="text" placeholder="Enter a Common Name" v-model='searchCName' @input="filterCommonNames()" @focus="displaySuggestions = true"></input>
     <div v-if="filteredCNames && displaySuggestions">
       <ul>
