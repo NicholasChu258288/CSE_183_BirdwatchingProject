@@ -1,0 +1,78 @@
+[[extend 'layout.html']]
+
+<style>
+[v-cloak] {
+    display: none;
+}
+.box {
+    max-height: 400px; /* Adjust the height as needed */
+    overflow-y: auto;
+}
+</style>
+
+<div class="section" id="app" v-cloak>
+    <h1 class="title">Location Statistics</h1>
+
+    <h2>Navigation</h2>
+    <button class="button is-primary" @click="goToIndex">Index</button>
+    <br>
+
+    <div class="container">
+        <p style="width:526px;">Welcome to the Location Statistics page. Here you can see the details of bird sightings in a selected region.</p>
+    </div>
+    <br>
+
+    <div class="box">
+        <h2>Species List</h2>
+        <table class="table is-striped">
+            <thead>
+                <tr>
+                    <th>Species</th>
+                    <th>Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="species in speciesList" :key="species.COMMON_NAME" @click="selectSpecies(species)">
+                    <td>{{ species.COMMON_NAME }}</td>
+                    <td>{{ species.count }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <div class="box">
+        <h2>Sightings Over Time</h2>
+        <canvas id="sightingsChart"></canvas>
+    </div>
+    <br>
+
+    <div class="box">
+        <h2>Top Contributors</h2>
+        <table class="table is-striped">
+            <thead>
+                <tr>
+                    <th>Contributor</th>
+                    <th>Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="contributor in topContributors" :key="contributor.user">
+                    <td>{{ contributor.user }}</td>
+                    <td>{{ contributor.count }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+[[block page_scripts]]
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let get_species_url = "[[=URL('api/location_stats')]]";
+    let get_sightings_over_time_url = "[[=URL('api/sightings_over_time')]]";
+</script>
+<script src="js/location.js"></script>
+[[end]]

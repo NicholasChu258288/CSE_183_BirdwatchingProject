@@ -65,8 +65,23 @@ app.data = {
                 console.log('Please select a region!');
                 alert('Select a region');
             }
-            
         },
+
+        enterLocation() {
+            if (newRectangle == 2){
+                localStorage.setItem('coord1', [app.drawing_coords[0].lat, app.drawing_coords[0].lng]);
+                localStorage.setItem('coord2', [app.drawing_coords[1].lat, app.drawing_coords[1].lng]);
+                window.location.href = '/birdwatching/location';
+            } else {
+                //Setting arbitray default coords to prevent possible issues later
+                localStorage.setItem('coord1', [37.074464, -121.92627]);
+                localStorage.setItem('coord2', [38.000000, -120.00000]);
+                console.log('Please select a region!');
+                alert('Select a region');
+            }
+        },
+        
+
         setSpeciesCommonNames: function(species_list){
             let self = this;
             species_list.forEach(function(s){

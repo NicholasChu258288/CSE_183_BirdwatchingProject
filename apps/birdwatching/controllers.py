@@ -35,7 +35,6 @@ from py4web.utils.grid import Grid, GridClassStyleBulma
 from datetime import datetime
 import uuid
 
-
 url_signer = URLSigner(session)
 
 @action('index')
@@ -49,9 +48,6 @@ def index():
 @action('checklist')
 @action.uses('checklist.html', auth.user, db)
 def checklist():
-    # user_id = auth.current_user.get('id')
-    # form = Form(db.checklists, hidden={'user_id': user_id, 'location': location}, formstyle=FormStyleBulma)
-    
     form = Form(db.checklists, formstyle=FormStyleBulma)
     if form.accepted:
         redirect(URL('edit_checklist', form.vars.id))
@@ -61,8 +57,6 @@ def checklist():
         get_species_url = URL('get_species'),
         submit_checklist_url = URL('submit_checklist')
     )
-
-
 
 @action('my_checklists/<path:path>', method=['GET', 'POST'])
 @action('my_checklists', method=['GET', 'POST'])
@@ -84,8 +78,7 @@ def my_checklist(path=None):
 @action('user_stats/<location>')
 @action('user_stats')
 @action.uses('user_stats.html', auth.user, db)
-def checklist():
-    
+def user_stats(location=None):
     return dict(
         get_species_url = URL('get_species'),
         submit_checklist_url = URL('submit_checklist')
@@ -148,4 +141,72 @@ def load_data():
     sightings_list = db(db.sightings).select().as_list()
     checklist_list = db(db.checklists).select().as_list()
     map_list = db(db.sightings.SAMPLING_EVENT_IDENTIFIER == db.checklists.SAMPLING_EVENT_IDENTIFIER).select(db.sightings.COMMON_NAME, db.checklists.LATITUDE, db.checklists.LONGITUDE).as_list()
-    return dict(species_list = species_list, sightings_list = sightings_list, checklist_list = checklist_list, map_list = map_list)
+    # print("Loading data:")
+    # print("Species list:", species_list)
+    # print("Sightings list:", sightings_list)
+    # print("Checklist list:", checklist_list)
+    # print("Map list:", map_list)
+    return dict(
+        species_list=species_list,
+        sightings_list=sightings_list,
+        checklist_list=checklist_list,
+        map_list=map_list
+    )
+
+
+@action('api/sightings_over_time', method=['GET'])
+@action.uses(db)
+def sightings_over_time():
+    species = request.params.get('species')
+    if not species:
+        return dict(error="Species not provided")
+
+    sightings_data = db((db.sightings.COMMON_NAME == species) &
+                        (db.sightings.SAMPLING_EVENT_IDENTIFIER == db.checklists.SAMPLING_EVENT_IDENTIFIER)
+                       ).select(db.checklists.OBSERVATION_DATE, db.sightings.OBSERVATION_COUNT.sum(),
+                                groupby=db.checklists.OBSERVATION_DATE,
+                                orderby=db.checklists.OBSERVATION_DATE)
+
+    return dict(
+        dates=[row.checklists.OBSERVATION_DATE for row in sightings_data],
+        counts=[row[db.sightings.OBSERVATION_COUNT.sum()] for row in sightings_data]
+    )
+
+
+
+@action('location')
+@action.uses('location.html', db)
+def location():
+    return dict()
+
+@action('api/location_stats', method=['GET'])
+@action.uses(db)
+def location_stats():
+    coord1 = request.params.get('coord1')
+    coord2 = request.params.get('coord2')
+    if not coord1 or not coord2:
+        return dict(error="Coordinates not provided")
+
+    coord1 = list(map(float, coord1.strip('[]').split(',')))
+    coord2 = list(map(float, coord2.strip('[]').split(',')))
+
+    species_data = db((db.checklists.LATITUDE >= min(coord1[0], coord2[0])) & 
+                      (db.checklists.LATITUDE <= max(coord1[0], coord2[0])) &
+                      (db.checklists.LONGITUDE >= min(coord1[1], coord2[1])) & 
+                      (db.checklists.LONGITUDE <= max(coord1[1], coord2[1])) &
+                      (db.sightings.SAMPLING_EVENT_IDENTIFIER == db.checklists.SAMPLING_EVENT_IDENTIFIER) &
+                      (db.sightings.COMMON_NAME == db.species.COMMON_NAME)
+                     ).select(db.species.ALL, db.sightings.OBSERVATION_COUNT.sum(),
+                              groupby=db.sightings.COMMON_NAME)
+
+    top_contributors = db((db.checklists.LATITUDE >= min(coord1[0], coord2[0])) & 
+                          (db.checklists.LATITUDE <= max(coord1[0], coord2[0])) &
+                          (db.checklists.LONGITUDE >= min(coord1[1], coord2[1])) & 
+                          (db.checklists.LONGITUDE <= max(coord1[1], coord2[1])) &
+                          (db.sightings.SAMPLING_EVENT_IDENTIFIER == db.checklists.SAMPLING_EVENT_IDENTIFIER)
+                         ).select(db.checklists.OBSERVER_ID, db.sightings.OBSERVATION_COUNT.sum(),
+                                  groupby=db.checklists.OBSERVER_ID,
+                                  orderby=~db.sightings.OBSERVATION_COUNT.sum())
+
+    return dict(species_list=[dict(COMMON_NAME=row.species.COMMON_NAME, count=row[db.sightings.OBSERVATION_COUNT.sum()]) for row in species_data],
+                top_contributors=[dict(user=row.checklists.OBSERVER_ID, count=row[db.sightings.OBSERVATION_COUNT.sum()]) for row in top_contributors])

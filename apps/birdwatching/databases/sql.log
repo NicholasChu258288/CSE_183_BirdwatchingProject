@@ -53,3 +53,159 @@ CREATE TABLE "checklists"(
     "duration_minute" CHAR(512)
 );
 success!
+timestamp: 2024-06-09T19:04:27.792633
+ALTER TABLE "sightings" ADD "latitude" DOUBLE;
+timestamp: 2024-06-09T19:04:27.793266
+ALTER TABLE "sightings" ADD "longitude" DOUBLE;
+timestamp: 2024-06-09T19:04:27.793619
+ALTER TABLE "sightings" ADD "date" TIMESTAMP;
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+timestamp: 2024-06-09T19:12:38.080162
+CREATE TABLE "mapLayers"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "common_name" CHAR(512),
+    "sampling_event_identifier" CHAR(512),
+    "latitude" CHAR(512),
+    "longitude" CHAR(512)
+);
+success!
+timestamp: 2024-06-09T19:38:52.025775
+ALTER TABLE "sightings" ADD "observation_date" CHAR(512);
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
