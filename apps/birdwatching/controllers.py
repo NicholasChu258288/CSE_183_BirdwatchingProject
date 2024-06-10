@@ -231,7 +231,7 @@ def location_stats():
 @action('get_user_species', method=['GET'])
 @action.uses(db, auth)
 def get_user_species():
-    observer_email = request.params.get('observer_email')
+    observer_email = get_user_email()
 
     if not observer_email:
         return dict(error="Observer email is required.")

@@ -21,6 +21,13 @@ app.data = {
         };
     },
     methods: {
+        goToMyChecklists() {
+            console.log("Navigating to My Checklists");
+            window.location.href = '/birdwatching/my_checklists';
+        },
+        goToIndex() {
+            window.location.href = '/birdwatching/index';
+        },
         setMapRegion: function(lat, lng) {
             this.mapLatitude = lat;
             this.mapLongitude = lng;
@@ -104,13 +111,12 @@ app.load_data = function() {
     
     // New axios request to get_user_species endpoint
     axios.get(get_user_species_url, {
-        params: {
-            observer_email: 'example@example.com' // Replace with dynamic email if needed
-        }
+
     }).then(function(r) {
+        console.log("results:", r);
         const speciesData = r.data.unique_common_names.map(name => ({
             name: name,
-            count: 1 // Default count to 1 for now, or adjust as per your requirement
+            // count: 1 // Default count to 1 for now, or adjust as per your requirement
         }));
 
         app.vue.speciesData = speciesData;

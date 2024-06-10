@@ -2,6 +2,10 @@
 
 <div class="section" id="app">
     <h1 class="title is-2">User Stats</h1>
+    <div class="buttons">
+        <button class="button is-info" @click="goToMyChecklists">My Checklists</button>
+        <button class="button is-primary" @click="goToIndex">Index</button>
+    </div>
     <div class="container">
         <p>Last 30 Spotted Species</p>
         <div id="map" style="height: 400px;"></div>
