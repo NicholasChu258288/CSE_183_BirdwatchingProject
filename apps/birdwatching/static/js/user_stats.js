@@ -109,22 +109,20 @@ app.load_data = function() {
         app.init(r.data.user_list);
     });
     
-    // New axios request to get_user_species endpoint
-    axios.get(get_user_species_url, {
-
-    }).then(function(r) {
+    axios.get(get_user_species_url).then(function(r) {
         console.log("results:", r);
-        const speciesData = r.data.unique_common_names.map(name => ({
-            name: name,
-            // count: 1 // Default count to 1 for now, or adjust as per your requirement
+        const speciesData = r.data.unique_species_data.map(species => ({
+            name: species.name,
+            count: species.count
         }));
-
+    
         app.vue.speciesData = speciesData;
         app.vue.filteredCNames = speciesData;
         app.vue.generateChart(speciesData);
     }).catch(function(error) {
         console.error("Error loading species data:", error);
     });
+    
 };
 
 app.load_data();

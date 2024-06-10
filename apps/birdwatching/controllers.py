@@ -246,13 +246,25 @@ def get_user_species():
     sampling_event_ids = [row.SAMPLING_EVENT_IDENTIFIER for row in observer_checklists]
 
     # Step 3: Query the `sightings` table for sightings matching these `SAMPLING_EVENT_IDENTIFIER` values
-    sightings = db(db.sightings.SAMPLING_EVENT_IDENTIFIER.belongs(sampling_event_ids)).select(db.sightings.COMMON_NAME)
+    sightings = db(db.sightings.SAMPLING_EVENT_IDENTIFIER.belongs(sampling_event_ids)).select(
+        db.sightings.COMMON_NAME, db.sightings.OBSERVATION_COUNT
+    )
 
     if not sightings:
         return dict(error="No sightings found for the specified checklists.")
 
-    # Step 4: Extract unique `COMMON_NAME` values from these sightings
-    unique_common_names = list(set(sighting.COMMON_NAME for sighting in sightings))
+    # Step 4: Sum the observation counts for each unique common name
+    species_count = {}
+    for sighting in sightings:
+        common_name = sighting.COMMON_NAME
+        count = int(sighting.OBSERVATION_COUNT) if sighting.OBSERVATION_COUNT.isdigit() else 0
+        if common_name in species_count:
+            species_count[common_name] += count
+        else:
+            species_count[common_name] = count
 
-    # Return the list of unique common names
-    return dict(unique_common_names=unique_common_names)
+    # Convert the dictionary to a list of dictionaries for easy JSON serialization
+    unique_species_data = [{"name": name, "count": count} for name, count in species_count.items()]
+
+    # Return the list of unique common names with their counts
+    return dict(unique_species_data=unique_species_data)
