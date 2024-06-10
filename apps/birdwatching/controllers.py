@@ -65,15 +65,21 @@ def my_checklist(path=None):
     observer_email = get_user_email()
     if not observer_email:
         redirect(URL('index'))
-    
+
+    # Join sightings table to retrieve count and name
     query = (db.checklists.OBSERVER_ID == observer_email)
+    query = query & (db.checklists.SAMPLING_EVENT_IDENTIFIER == db.sightings.SAMPLING_EVENT_IDENTIFIER)
+    sightings_count = db.sightings.OBSERVATION_COUNT
+    sightings_name = db.sightings.COMMON_NAME
     grid = Grid(path,
                 formstyle=FormStyleBulma,
                 grid_class_style=GridClassStyleBulma,
                 query=query,
+                fields=[sightings_name, sightings_count, db.checklists.SAMPLING_EVENT_IDENTIFIER, db.checklists.LATITUDE, db.checklists.LONGITUDE, db.checklists.OBSERVATION_DATE, db.checklists.DURATION_MINUTE],
                 )
-    
+
     return dict(grid=grid)
+
 
 @action('user_stats/<location>')
 @action('user_stats')
