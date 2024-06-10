@@ -62,6 +62,8 @@ def checklist():
         submit_checklist_url = URL('submit_checklist')
     )
 
+
+
 @action('my_checklists/<path:path>', method=['GET', 'POST'])
 @action('my_checklists', method=['GET', 'POST'])
 @action.uses('my_checklists.html', db, auth)
@@ -79,11 +81,14 @@ def my_checklist(path=None):
     
     return dict(grid=grid)
 
+@action('user_stats/<location>')
 @action('user_stats')
-@action.uses('user_stats.html', db, auth)
-def user_stats():
+@action.uses('user_stats.html', auth.user, db)
+def checklist():
+    
     return dict(
- 
+        get_species_url = URL('get_species'),
+        submit_checklist_url = URL('submit_checklist')
     )
 
 @action('get_sightings', method=['GET'])
