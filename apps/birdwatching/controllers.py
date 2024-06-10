@@ -66,10 +66,15 @@ def checklist():
 @action('my_checklists', method=['GET', 'POST'])
 @action.uses('my_checklists.html', db, auth)
 def my_checklist(path=None):
+    observer_email = get_user_email()
+    if not observer_email:
+        redirect(URL('index'))
+    
+    query = (db.checklists.OBSERVER_ID == observer_email)
     grid = Grid(path,
                 formstyle=FormStyleBulma,
                 grid_class_style=GridClassStyleBulma,
-                query=(db.checklists.id > 0),
+                query=query,
                 )
     
     return dict(grid=grid)

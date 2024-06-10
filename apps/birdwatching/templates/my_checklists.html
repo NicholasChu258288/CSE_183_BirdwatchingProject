@@ -1,7 +1,16 @@
 [[extend 'layout.html']]
 
-<div class="section">
+<div class="section" id="app">
     <!-- Put here your Vue.js template -->
     <h1 class="title">My Checklists</h1>
     [[=grid]]
+    <div class="buttons">
+        <button class="button is-info" @click="goToChecklists">Checklists</button>
+        <button class="button is-primary" @click="goToIndex">Index</button>
+    </div>
 </div>
+
+[[block page_scripts]]
+  <!-- Loads the index-specific js for Vue -->
+  <script src="js/my_checklists.js"></script>
+[[end]]
