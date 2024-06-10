@@ -46,6 +46,7 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
+              <button class="button is-info" @click="goToUserStats">User Stats</button>
               [[if globals().get('user'):]]
                 <div class="navbar-item has-dropdown is-hoverable">
                   <a class="navbar-link is-primary">
@@ -83,5 +84,6 @@
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.21/vue.global.min.js"></script> -->
   <script src="js/vue3.js"></script> 
   <script src="js/utils.js"></script>
+  <script src="js/layout.js"></script>
   [[block page_scripts]]<!-- individual pages can add scripts here -->[[end]]
 </html>
