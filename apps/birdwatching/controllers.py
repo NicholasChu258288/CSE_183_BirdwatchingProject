@@ -79,6 +79,13 @@ def my_checklist(path=None):
     
     return dict(grid=grid)
 
+@action('user_stats')
+@action.uses('user_stats.html', db, auth)
+def user_stats():
+    return dict(
+ 
+    )
+
 @action('get_sightings', method=['GET'])
 @action.uses(db, auth)
 def get_sightings():

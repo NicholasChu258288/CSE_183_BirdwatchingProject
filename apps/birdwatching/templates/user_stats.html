@@ -1,0 +1,16 @@
+[[extend 'layout.html']]
+
+<div class="section" id="app">
+    <h1 class="title is-2">User Stats</h1>
+</div>
+  
+  
+
+[[block page_scripts]]
+  <!-- Loads the index-specific js for Vue -->
+  <script>
+    let get_species_url = "[[=XML(get_species_url)]]";
+    let submit_checklist_url = "[[=XML(submit_checklist_url)]]"
+  </script>
+  <script src="js/user_stats.js"></script>
+[[end]]
