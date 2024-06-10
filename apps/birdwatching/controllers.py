@@ -32,6 +32,9 @@ from py4web.utils.url_signer import URLSigner
 from .models import get_user_email
 from py4web.utils.form import Form, FormStyleBulma
 from py4web.utils.grid import Grid, GridClassStyleBulma
+from datetime import datetime
+import uuid
+
 
 url_signer = URLSigner(session)
 
@@ -53,19 +56,78 @@ def checklist():
     if form.accepted:
         redirect(URL('edit_checklist', form.vars.id))
     
-    return dict(form=form)
+    return dict(
+        form=form,
+        get_species_url = URL('get_species'),
+        submit_checklist_url = URL('submit_checklist')
+    )
 
 @action('my_checklists/<path:path>', method=['GET', 'POST'])
 @action('my_checklists', method=['GET', 'POST'])
 @action.uses('my_checklists.html', db, auth)
 def my_checklist(path=None):
+    observer_email = get_user_email()
+    if not observer_email:
+        redirect(URL('index'))
+    
+    query = (db.checklists.OBSERVER_ID == observer_email)
     grid = Grid(path,
                 formstyle=FormStyleBulma,
                 grid_class_style=GridClassStyleBulma,
-                query=(db.checklists.id > 0),
+                query=query,
                 )
     
     return dict(grid=grid)
+
+@action('get_sightings', method=['GET'])
+@action.uses(db, auth)
+def get_sightings():
+    try:
+        limit = int(request.params.get('limit', 100))
+        offset = int(request.params.get('offset', 0))
+        sightings_list = db(db.sightings).select(limitby=(offset, offset + limit)).as_list()
+        return dict(sightings_list=sightings_list)
+    except Exception as e:
+        return dict(error=str(e))
+    
+@action('get_species', method=['GET'])
+@action.uses(db, auth)
+def get_species():
+    species_list = db(db.species).select(orderby=db.species.COMMON_NAME)
+    return dict(species_list=species_list)
+
+@action('submit_checklist', method='POST')
+@action.uses(db, auth)
+def submit_checklist():
+    data = request.json
+    if not data:
+        return dict(success=False, message="No data received")
+    
+    observer_id = get_user_email()
+    if not observer_id:
+        return dict(success=False, message="User not authenticated")
+    
+    # Generate a new unique identifier for the sampling event
+    sampling_event_identifier = str(uuid.uuid4())
+    
+    # Insert new entry into the sightings table
+    db.sightings.insert(
+        SAMPLING_EVENT_IDENTIFIER=sampling_event_identifier,
+        COMMON_NAME=data.get('COMMON_NAME'),
+        OBSERVATION_COUNT=data.get('observationCount')
+    )
+    
+    # Insert new entry into the checklists table
+    db.checklists.insert(
+        SAMPLING_EVENT_IDENTIFIER=sampling_event_identifier,
+        LATITUDE=data.get('LATITUDE'),
+        LONGITUDE=data.get('LONGITUDE'),
+        OBSERVATION_DATE=datetime.now().isoformat(),  # Use current datetime
+        OBSERVER_ID=observer_id,
+        DURATION_MINUTE=data.get('DURATION_MINUTE')
+    )
+    
+    return dict(success=True, message="Checklist submitted successfully")
 
 @action('load_data', method='GET')
 @action.uses(db, auth)

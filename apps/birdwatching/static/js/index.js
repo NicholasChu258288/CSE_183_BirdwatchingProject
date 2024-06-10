@@ -63,6 +63,7 @@ app.data = {
                 localStorage.setItem('coord1', [37.074464, -121.92627]);
                 localStorage.setItem('coord2', [38.000000, -120.00000]);
                 console.log('Please select a region!');
+                alert('Select a region');
             }
             
         },
