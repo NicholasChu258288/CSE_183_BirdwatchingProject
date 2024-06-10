@@ -21,7 +21,7 @@ app.data = {
         };
     },
     methods: {
-        setMapRegion: function(lat, lng){
+        setMapRegion: function(lat, lng) {
             this.mapLatitude = lat;
             this.mapLongitude = lng;
         },
@@ -60,7 +60,7 @@ app.init = function(s) {
     console.log('Initializing');
     console.log(s);
 
-    if (coord1 && coord1.length == 2){
+    if (coord1 && coord1.length == 2) {
         console.log('Changing from default starting coords\n');
         startingLat = coord1[0];
         startingLong = coord1[1];
@@ -74,8 +74,8 @@ app.init = function(s) {
     }).addTo(app.map);
 
     let i = 0;
-    s.forEach(function (res){
-        if (i < 30){ // Add only up to the first 30 coords as markers to avoid issues
+    s.forEach(function(res) {
+        if (i < 30) { // Add only up to the first 30 coords as markers to avoid issues
             L.marker(L.latLng(Number(res.LATITUDE), Number(res.LONGITUDE))).addTo(app.map);
             i++;
         }
@@ -100,6 +100,24 @@ app.init = function(s) {
 app.load_data = function() {
     axios.get(load_user_stats_url).then(function(r) {
         app.init(r.data.user_list);
+    });
+    
+    // New axios request to get_user_species endpoint
+    axios.get(get_user_species_url, {
+        params: {
+            observer_email: 'example@example.com' // Replace with dynamic email if needed
+        }
+    }).then(function(r) {
+        const speciesData = r.data.unique_common_names.map(name => ({
+            name: name,
+            count: 1 // Default count to 1 for now, or adjust as per your requirement
+        }));
+
+        app.vue.speciesData = speciesData;
+        app.vue.filteredCNames = speciesData;
+        app.vue.generateChart(speciesData);
+    }).catch(function(error) {
+        console.error("Error loading species data:", error);
     });
 };
 

@@ -78,7 +78,7 @@ def my_checklist(path=None):
 @action('user_stats/<location>')
 @action('user_stats')
 @action.uses('user_stats.html', auth.user, db)
-def checklist():
+def user_stats():
     observer_email = get_user_email()
     if not observer_email:
         redirect(URL('index'))
@@ -87,6 +87,7 @@ def checklist():
         get_species_url = URL('get_species'),
         submit_checklist_url = URL('submit_checklist'),
         load_user_stats_url = URL('load_user_stats'),
+        get_user_species_url = URL('get_user_species')
     )
 
 @action('load_user_stats', method='GET')
@@ -226,3 +227,32 @@ def location_stats():
 
     return dict(species_list=[dict(COMMON_NAME=row.species.COMMON_NAME, count=row[db.sightings.OBSERVATION_COUNT.sum()]) for row in species_data],
                 top_contributors=[dict(user=row.checklists.OBSERVER_ID, count=row[db.sightings.OBSERVATION_COUNT.sum()]) for row in top_contributors])
+
+@action('get_user_species', method=['GET'])
+@action.uses(db, auth)
+def get_user_species():
+    observer_email = request.params.get('observer_email')
+
+    if not observer_email:
+        return dict(error="Observer email is required.")
+
+    # Step 1: Query the `checklists` table for the observer's checklists
+    observer_checklists = db(db.checklists.OBSERVER_ID == observer_email).select(db.checklists.SAMPLING_EVENT_IDENTIFIER)
+
+    if not observer_checklists:
+        return dict(error="No checklists found for the specified observer.")
+
+    # Step 2: Extract the `SAMPLING_EVENT_IDENTIFIER` values
+    sampling_event_ids = [row.SAMPLING_EVENT_IDENTIFIER for row in observer_checklists]
+
+    # Step 3: Query the `sightings` table for sightings matching these `SAMPLING_EVENT_IDENTIFIER` values
+    sightings = db(db.sightings.SAMPLING_EVENT_IDENTIFIER.belongs(sampling_event_ids)).select(db.sightings.COMMON_NAME)
+
+    if not sightings:
+        return dict(error="No sightings found for the specified checklists.")
+
+    # Step 4: Extract unique `COMMON_NAME` values from these sightings
+    unique_common_names = list(set(sighting.COMMON_NAME for sighting in sightings))
+
+    # Return the list of unique common names
+    return dict(unique_common_names=unique_common_names)
