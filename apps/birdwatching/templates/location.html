@@ -8,7 +8,9 @@
     max-height: 400px; /* Adjust the height as needed */
     overflow-y: auto;
 }
+
 </style>
+
 
 <div class="section" id="app" v-cloak>
     <h1 class="title">Location Statistics</h1>
@@ -32,8 +34,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="species in speciesList" :key="species.COMMON_NAME" @click="selectSpecies(species)">
-                    <td>{{ species.COMMON_NAME }}</td>
+                <tr v-for="species in speciesList" :key="species.COMMON_NAME" @click="selectSpecies(species)" style="cursor: pointer">
+                    <td>{{ species.COMMON_NAME }}</td> 
                     <td>{{ species.count }}</td>
                 </tr>
             </tbody>
@@ -52,7 +54,7 @@
         <table class="table is-striped">
             <thead>
                 <tr>
-                    <th>Contributor</th>
+                    <th></th>Contributor</th>
                     <th>Count</th>
                 </tr>
             </thead>

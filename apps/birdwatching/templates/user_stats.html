@@ -2,19 +2,32 @@
 
 <div class="section" id="app">
     <h1 class="title is-2">User Stats</h1>
-</div>
-
-<div class="container">
-  <p> Last 30 Spotted Species </p>
-  <div id="map"></div>
+    <div class="container">
+        <p>Last 30 Spotted Species</p>
+        <div id="map" style="height: 400px;"></div>
+        <div class="columns">
+            <div class="column is-half">
+                <h2 class="subtitle">Species Seen</h2>
+                <input v-model="searchCName" @input="filterSpecies" placeholder="Search for a species..." class="input">
+                <ul>
+                    <li v-for="species in filteredCNames" :key="species.name">{{ species.name }} ({{ species.count }})</li>
+                </ul>
+            </div>
+            <div class="column is-half">
+                <h2 class="subtitle">Species Sightings Chart</h2>
+                <canvas id="speciesChart"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
 
 [[block page_scripts]]
-  <!-- Loads the index-specific js for Vue -->
+  <!-- Loads the user_stats-specific js for Vue -->
   <script>
     let load_user_stats_url = "[[=XML(load_user_stats_url)]]";
     let get_species_url = "[[=XML(get_species_url)]]";
     let submit_checklist_url = "[[=XML(submit_checklist_url)]]";
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="js/user_stats.js"></script>
 [[end]]

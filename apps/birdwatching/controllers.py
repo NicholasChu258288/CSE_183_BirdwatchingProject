@@ -203,6 +203,7 @@ def location_stats():
 
     coord1 = list(map(float, coord1.strip('[]').split(',')))
     coord2 = list(map(float, coord2.strip('[]').split(',')))
+    print 
 
     species_data = db((db.checklists.LATITUDE >= min(coord1[0], coord2[0])) & 
                       (db.checklists.LATITUDE <= max(coord1[0], coord2[0])) &
@@ -212,6 +213,7 @@ def location_stats():
                       (db.sightings.COMMON_NAME == db.species.COMMON_NAME)
                      ).select(db.species.ALL, db.sightings.OBSERVATION_COUNT.sum(),
                               groupby=db.sightings.COMMON_NAME)
+    print(species_data)
 
     top_contributors = db((db.checklists.LATITUDE >= min(coord1[0], coord2[0])) & 
                           (db.checklists.LATITUDE <= max(coord1[0], coord2[0])) &
