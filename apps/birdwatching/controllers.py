@@ -78,10 +78,24 @@ def my_checklist(path=None):
 @action('user_stats/<location>')
 @action('user_stats')
 @action.uses('user_stats.html', auth.user, db)
-def user_stats(location=None):
+def checklist():
+    observer_email = get_user_email()
+    if not observer_email:
+        redirect(URL('index'))
+ 
     return dict(
         get_species_url = URL('get_species'),
-        submit_checklist_url = URL('submit_checklist')
+        submit_checklist_url = URL('submit_checklist'),
+        load_user_stats_url = URL('load_user_stats'),
+    )
+
+@action('load_user_stats', method='GET')
+@action.uses(db, auth)
+def load_user_stats():
+    observer_email = get_user_email()
+    user_list = db(db.checklists.OBSERVER_ID == observer_email).select(orderby=~db.checklists.OBSERVATION_DATE).as_list()
+    return dict(
+        user_list = user_list,
     )
 
 @action('get_sightings', method=['GET'])
