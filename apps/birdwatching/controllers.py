@@ -32,6 +32,9 @@ from py4web.utils.url_signer import URLSigner
 from .models import get_user_email
 from py4web.utils.form import Form, FormStyleBulma
 from py4web.utils.grid import Grid, GridClassStyleBulma
+from datetime import datetime
+import uuid
+
 
 url_signer = URLSigner(session)
 
@@ -71,22 +74,6 @@ def my_checklist(path=None):
     
     return dict(grid=grid)
 
-@action('submit_checklist', method='POST')
-@action.uses(db, auth)
-def submit_checklist():
-    data = request.json
-    if not data:
-        return dict(success=False, message="No data received")
-    
-    for item in data:
-        db.sightings.insert(
-            SAMPLING_EVENT_IDENTIFIER=item.get('SAMPLING_EVENT_IDENTIFIER'),
-            COMMON_NAME=item.get('COMMON_NAME'),
-            OBSERVATION_COUNT=item.get('observationCount')
-        )
-    
-    return dict(success=True, message="Checklist submitted successfully")
-
 @action('get_sightings', method=['GET'])
 @action.uses(db, auth)
 def get_sightings():
@@ -100,10 +87,42 @@ def get_sightings():
     
 @action('get_species', method=['GET'])
 @action.uses(db, auth)
-def get_speciess():
+def get_species():
     species_list = db(db.species).select(orderby=db.species.COMMON_NAME)
     return dict(species_list=species_list)
 
+@action('submit_checklist', method='POST')
+@action.uses(db, auth)
+def submit_checklist():
+    data = request.json
+    if not data:
+        return dict(success=False, message="No data received")
+    
+    observer_id = get_user_email()
+    if not observer_id:
+        return dict(success=False, message="User not authenticated")
+    
+    # Generate a new unique identifier for the sampling event
+    sampling_event_identifier = str(uuid.uuid4())
+    
+    # Insert new entry into the sightings table
+    db.sightings.insert(
+        SAMPLING_EVENT_IDENTIFIER=sampling_event_identifier,
+        COMMON_NAME=data.get('COMMON_NAME'),
+        OBSERVATION_COUNT=data.get('observationCount')
+    )
+    
+    # Insert new entry into the checklists table
+    db.checklists.insert(
+        SAMPLING_EVENT_IDENTIFIER=sampling_event_identifier,
+        LATITUDE=data.get('LATITUDE'),
+        LONGITUDE=data.get('LONGITUDE'),
+        OBSERVATION_DATE=datetime.now().isoformat(),  # Use current datetime
+        OBSERVER_ID=observer_id,
+        DURATION_MINUTE=data.get('DURATION_MINUTE')
+    )
+    
+    return dict(success=True, message="Checklist submitted successfully")
 
 @action('load_data', method='GET')
 @action.uses(db, auth)

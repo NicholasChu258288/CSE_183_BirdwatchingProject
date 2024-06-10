@@ -12,23 +12,35 @@
             <thead>
                 <tr>
                     <th>Species Name</th>
-                    <th>Number of Sightings</th>
-                    <th>Add Sightings Count</th>
-                    <th></th>
+                    <th>Number Seen</th>
+                    <th>Duration Seen(minutes)</th>
+                    <th>Submit Sighting</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="species in filteredSpecies" :key="species.COMMON_NAME">
                     <td>{{ species.COMMON_NAME }}</td>
-                    <td>{{ species.SAMPLING_EVENT_IDENTIFIER }}</td>
-                    <td>{{ species.OBSERVATION_COUNT }}</td>
                     <td>
                         <div class="field has-addons">
-                            <div class="control is-expanded">
-                                <input class="input" type="number" v-model="species.incrementCount" min="0">
+                            <div class="control">
+                                <input class="input" type="number" v-model="species.observationCount" min="0">
                             </div>
                             <div class="control">
-                                <button class="button is-success" @click="incrementCount(species)">Submit</button>
+                                <button class="button is-success" @click="incrementCount(species)">+1</button>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="field">
+                            <div class="control">
+                                <input class="input" type="number" v-model="species.duration" min="0">
+                            </div>
+                        </div>
+                    </td>
+                    <td class="has-text-right"> <!-- Added class "has-text-centered" -->
+                        <div class="field">
+                            <div class="control">
+                                <button class="button is-success" @click="submitData(species)">Submit</button>
                             </div>
                         </div>
                     </td>
