@@ -76,6 +76,9 @@ def my_checklist(path=None):
                 grid_class_style=GridClassStyleBulma,
                 query=query,
                 fields=[sightings_name, sightings_count, db.checklists.SAMPLING_EVENT_IDENTIFIER, db.checklists.LATITUDE, db.checklists.LONGITUDE, db.checklists.OBSERVATION_DATE, db.checklists.DURATION_MINUTE],
+                search_queries=[
+                    ['Search by Name', lambda val: db.sightings.COMMON_NAME.contains(val)],
+                ]
                 )
 
     return dict(grid=grid)
