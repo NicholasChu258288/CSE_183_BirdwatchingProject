@@ -13,7 +13,7 @@ let startingLong = -121.92627;
 
 //Map listener functions
 var popup = L.popup;
-let newRectangle = 0;
+let newRectangle = 0; 
 app.drawing_coords = [];
 app.rectangle = [];
 app.species_names = [];
@@ -32,8 +32,8 @@ var heat;
 
 app.sightings_reference = {};// SpeciesName: {sampling events}
 
-app.data = {
-    data: function () {
+app.data = {    
+    data: function() {
         return {
             // Complete as you see fit.
             mapLatitude: 0,
@@ -41,20 +41,20 @@ app.data = {
             mapZoom: 8,
             speciesCNames: [],
             selectedCNames: [],
-
-            displaySuggestions: false,
+            
+            displaySuggestions: false, 
             searchCName: '',
             filteredCNames: [],
         };
     },
     methods: {
         // Complete as you see fit.
-        setMapRegion: function (latitude, longitude) {
+        setMapRegion: function(latitude, longitude){
             this.mapLatitude = latitude;
             this.mapLongitude = longitude;
         },
         enterChecklist() {
-            if (newRectangle == 2) {
+            if (newRectangle == 2){
                 localStorage.setItem('coord1', [app.drawing_coords[0].lat, app.drawing_coords[0].lng]);
                 localStorage.setItem('coord2', [app.drawing_coords[1].lat, app.drawing_coords[1].lng]);
                 window.location.href = '/birdwatching/checklist';
@@ -68,7 +68,8 @@ app.data = {
         },
 
         enterLocation() {
-            if (newRectangle == 2) {
+            console.log('Location button clicked');
+            if (newRectangle == 2){
                 localStorage.setItem('coord1', [app.drawing_coords[0].lat, app.drawing_coords[0].lng]);
                 localStorage.setItem('coord2', [app.drawing_coords[1].lat, app.drawing_coords[1].lng]);
                 window.location.href = '/birdwatching/location';
@@ -80,37 +81,51 @@ app.data = {
                 alert('Select a region');
             }
         },
+        
 
-
-        setSpeciesCommonNames: function (species_list) {
+        setSpeciesCommonNames: function(species_list){
             let self = this;
-            species_list.forEach(function (s) {
+            species_list.forEach(function(s){
                 self.speciesCNames.push(s.COMMON_NAME);
             });
         },
-        addSpeicesCommonName: function (common_name) {
+        addSpeicesCommonName: function(common_name){
             let self = this;
             self.speciesCNames.push(common_name);
         },
-        setSelectedSpecies: function (selectedSpeciesList) {
+        setSelectedSpecies: function(selectedSpeciesList){
             let self = this;
-            selectedSpeciesList.forEach(function (s) {
+            selectedSpeciesList.forEach(function(s){
                 self.selectedCNames.push(s);
             });
         },
-        filterCommonNames: function () {
+        filterCommonNames: function(){
             //console.log("Filtering by name:", this.searchCName);
-            this.filteredCNames = this.speciesCNames.filter(cName => {
-                return cName.toString().toLowerCase().startsWith(this.searchCName.toString().toLowerCase());
+            let limit_display = true;
+            if (limit_display){}
+            this.filteredCNames = this.speciesCNames.filter( cName => {
+                return cName.toString().toLowerCase().includes(this.searchCName.toString().toLowerCase());
             });
+            if (limit_display == true){
+                let tmp = [];
+                let max = 8; //Max number of species displayed
+                this.filteredCNames.forEach( function(r) {
+                    if (max != 0){
+                        tmp.push(r);
+                        max --;
+                    }
+                });
+                this.filteredCNames = tmp;
+
+            }
         },
-        setSeachCName: function (setName) {
+        setSeachCName: function(setName){
             this.searchCName = setName;
             this.displaySuggestions = false;
         },
-        editSelectedSpecies: function (cName) {
+        editSelectedSpecies: function(cName){
             //console.log("Selected: ", cName, "\n");
-            if (this.selectedCNames.includes(cName)) {
+            if (this.selectedCNames.includes(cName)){
                 console.log("Already in selected list\n");
             } else {
                 //console.log("DNE so can push to list");
@@ -119,10 +134,10 @@ app.data = {
             }
             app.selected_species = this.selectedCNames;
         },
-        deleteSelectedSpecies: function (cName) {
+        deleteSelectedSpecies: function(cName){
             let tmp = [];
-            this.selectedCNames.forEach(function (s) {
-                if (s != cName) {
+            this.selectedCNames.forEach(function(s){
+                if (s != cName){
                     tmp.push(s);
                 }
             });
@@ -134,7 +149,7 @@ app.data = {
 };
 
 
-function mapClick(e) {
+function mapClick(e){
     popup
         .setLatLng(e.latlng)
         .setContent("You clicked the map at " + e.latlng.toString())
@@ -144,36 +159,30 @@ function mapClick(e) {
 }
 
 app.click_listener = function (e) {
-    // If we are drawing, it's one more point for our polygon.
-    if (newRectangle == 2) {
-        app.rectangle.forEach(function (r) {
-            app.map.removeLayer(r);
-        });
-        app.map.removeLayer(app.rectangle);
-        app.drawing_coords = [];
-        newRectangle = 0;
-    }
-    app.drawing_coords.push(e.latlng);
-    newRectangle += 1;
-    if (newRectangle == 2) {
-        var r = L.rectangle(app.drawing_coords, { color: 'red' }).addTo(app.map);
-        app.rectangle.push(r);
-        console.log('Coord 1:', app.drawing_coords[0].lat, app.drawing_coords[0].lng);
-        console.log('Coord 2:', app.drawing_coords[1].lat, app.drawing_coords[1].lng);
-
-        // Update selected species based on the new region
-        localStorage.setItem('coord1', JSON.stringify([app.drawing_coords[0].lat, app.drawing_coords[0].lng]));
-        localStorage.setItem('coord2', JSON.stringify([app.drawing_coords[1].lat, app.drawing_coords[1].lng]));
-        app.filterSightingsByRegion();
-    }
+        // If we are drawing, it's one more point for our polygon.
+        if (newRectangle == 2){
+            app.rectangle.forEach(function(r){
+                app.map.removeLayer(r);
+            });
+            app.map.removeLayer(app.rectangle);
+            app.drawing_coords = [];
+            newRectangle = 0;
+        }
+        app.drawing_coords.push(e.latlng);
+        newRectangle += 1;
+        if (newRectangle == 2){
+            var r = L.rectangle(app.drawing_coords, {color: 'red'}).addTo(app.map);
+            app.rectangle.push(r);
+            console.log('Coord 1:', app.drawing_coords[0].lat, app.drawing_coords[0].lng);
+            console.log('Coord 2:', app.drawing_coords[1].lat, app.drawing_coords[1].lng);
+        }
 };
 
-
-app.heatMap_listener = function (e) {
+app.heatMap_listener = function(e) {
     //console.log('Heat listener called');
     //console.log(app.sightings_reference);
 
-    if (app.existingHeatMaps.toString() != app.selected_species.toString()) {
+    if (app.existingHeatMaps.toString() != app.selected_species.toString()){
         console.log('Need to create new heatMap');
         //console.log(app.existingHeatMaps);
         //console.log(app.selected_species);
@@ -183,18 +192,18 @@ app.heatMap_listener = function (e) {
             c++
         });
         */
-        app.map.removeLayer(heat);
+       app.map.removeLayer(heat);
 
 
 
         app.existingHeatMaps = [];
         app.heatMapCoords = [];
-
-        app.selected_species.forEach(function (i) {
+    
+        app.selected_species.forEach(function (i){
             app.existingHeatMaps.push(i);
         });
 
-        app.existingHeatMaps.forEach(function (i) {
+        app.existingHeatMaps.forEach(function (i){
             //app.sightings_reference;
             //app.heatMapCoords;
             //console.log('Species name:', i);
@@ -202,7 +211,7 @@ app.heatMap_listener = function (e) {
 
             //Add coordinates
             app.heatMapCoords = app.heatMapCoords.concat(app.sightings_reference[i]);
-
+            
             //console.log(app.heatMapCoords);
         });
 
@@ -210,7 +219,7 @@ app.heatMap_listener = function (e) {
     } else {
         console.log('No need to update heatmap');
     }
-
+    
 
     console.log("Create heat maps for:", app.existingHeatMaps);
 
@@ -221,9 +230,9 @@ app.vue = Vue.createApp(app.data).mount("#app");
 
 //Initializing map
 app.init = () => {
-
-
-    app.vue.setMapRegion(startingLat, startingLong);
+    
+    
+    app.vue.setMapRegion(startingLat,startingLong);
 
     app.map = L.map('map').setView([app.vue.mapLatitude, app.vue.mapLongitude], app.vue.mapZoom);
     L.tileLayer('https://api.maptiler.com/maps/basic-v2/{z}/{x}/{y}.png?key=hHqg8mPc2fHoRXZlWkXl', {
@@ -233,9 +242,9 @@ app.init = () => {
     console.log("initializing");
 
     heat = L.heatLayer(app.heatMapCoords).addTo(app.map);
-
+    
     //L.marker(L.latLng(37.094464, -122)).addTo(app.map);
-
+    
     /*
     var overlayMaps = {};
     var layerElement = [];
@@ -279,93 +288,78 @@ app.init = () => {
     */
 
     //L.control.layers(overlayMaps).addTo(app.map);
-
+    
 
     //Set up layers
     popup = L.popup()
-        .setLatLng([startingLat, startingLong])
-        .setContent("Select a region by drawing a rectangle, done through clicking two points on the map.")
-        .openOn(app.map);
+    .setLatLng([startingLat, startingLong])
+    .setContent("Select a region by drawing a rectangle, done through clicking two points on the map.")
+    .openOn(app.map);
 
     //Listeners
     app.map.on('click', mapClick); //Should just point location
     app.map.on('click', app.click_listener); //Click test
     app.map.on('mouseover', app.heatMap_listener);
-    console.log('Done initializing');
-    console.log(app.sightings_reference);
+    //console.log('Done initializing');
+    //console.log(app.sightings_reference);
 }
 
 app.load_data = function () {
-    axios.get(load_data_url).then(function (r) {
-
+    axios.get(load_data_url).then( function (r){
+        
         let s = r.data.species_list;
         let i = 0;
         //console.log('Setting up species list');
-        s.forEach(function (res) {
+        s.forEach(function(res){
             /*if (i < 2){
                 console.log(res);
                 i++;
             }*/
-            //Just skip first
-            if (i != 0) {
+           //Just skip first
+            if (i != 0){
                 app.species_data.push(res);
                 app.sightings_reference[res.COMMON_NAME] = [];
                 app.vue.addSpeicesCommonName(res.COMMON_NAME);
             } else {
                 i++;
             }
-
+            
         });
-        // //console.log('Finished setting up');
+        //console.log('Finished setting up');
+        
+        /*
+        let si = r.data.sightings_list;
+        si.forEach(function(res){
+            app.sightings_data.push(res);
+        });
 
-        // /*
-        // let si = r.data.sightings_list;
-        // si.forEach(function(res){
-        //     app.sightings_data.push(res);
-        // });
-
-        // let c = r.data.checklist_list;
-        // c.forEach(function(res){
-        //    app.checklist_data.push(res);
-        // })
-        // */
+        let c = r.data.checklist_list;
+        c.forEach(function(res){
+           app.checklist_data.push(res);
+        })
+        */
 
         let m = r.data.map_list;
         let map_data_size = 0;
         //console.log("Creating list");
-        m.forEach(function (res) {
+        m.forEach(function(res){
             app.map_data.push(res);
             //app.sightings_reference[res.sightings.COMMON_NAME].push([parseFloat(res.checklists.LATITUDE), parseFloat(res.checklists.LONGITUDE)]);
 
-            if (map_data_size > 0) {
+            if (map_data_size > 0){
                 app.sightings_reference[res.sightings.COMMON_NAME].push([Number(res.checklists.LATITUDE), Number(res.checklists.LONGITUDE)]);
                 app.heatMapCoords.push([res.checklists.LATITUDE, res.checklists.LONGITUDE]);
             } else {
                 console.log(res);
             }
-            map_data_size += 1;
+            map_data_size+=1;
             //app.sightings_reference[res.sightings.COMMON_NAME].push([res.checklists.LATITUDE, res.checklists.LONGITUDE]);
         });
         //console.log("Finished list");
 
-        app.init();
+       app.init();
     });
 }
-
-app.filterSightingsByRegion = function () {
-    let coord1 = JSON.parse(localStorage.getItem('coord1'));
-    let coord2 = JSON.parse(localStorage.getItem('coord2'));
-
-    app.selected_species = app.species_data.filter(species => {
-        return app.sightings_reference[species.COMMON_NAME].some(coord => {
-            return (coord[0] >= Math.min(coord1[0], coord2[0]) && coord[0] <= Math.max(coord1[0], coord2[0]) &&
-                coord[1] >= Math.min(coord1[1], coord2[1]) && coord[1] <= Math.max(coord1[1], coord2[1]));
-        });
-    }).map(species => species.COMMON_NAME);
-
-    console.log("Selected species within region:", app.selected_species);
-};
-
 
 
 app.load_data();
