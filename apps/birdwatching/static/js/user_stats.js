@@ -18,6 +18,7 @@ app.data = {
             searchCName: '',
             filteredCNames: [],
             speciesData: [],
+            currentUserEmail: null,
         };
     },
     methods: {
@@ -27,6 +28,17 @@ app.data = {
         },
         goToIndex() {
             window.location.href = '/birdwatching/index';
+        },
+        getCurrentUserEmail() {
+            axios.get(get_current_user_email_url)
+                .then(response => {
+                    // console.log("DATA: ", response.data);
+                    this.currentUserEmail = response.data;
+                    // console.log("Current email: ", this.currentUserEmail);
+                })
+                .catch(error => {
+                    console.error('Error getting current user: ', error);
+                });
         },
         setMapRegion: function(lat, lng) {
             this.mapLatitude = lat;
@@ -58,7 +70,10 @@ app.data = {
                 }
             });
         }
-    }
+    },
+    mounted: function() {
+        this.getCurrentUserEmail();
+    },
 };
 
 app.vue = Vue.createApp(app.data).mount("#app");
@@ -106,6 +121,7 @@ app.init = function(s) {
 
 app.load_data = function() {
     axios.get(load_user_stats_url).then(function(r) {
+        const userEmail = r.data.user_email;
         app.init(r.data.user_list);
     });
     

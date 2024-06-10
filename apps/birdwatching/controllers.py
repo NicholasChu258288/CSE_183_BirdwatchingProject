@@ -93,7 +93,8 @@ def user_stats():
         get_species_url = URL('get_species'),
         submit_checklist_url = URL('submit_checklist'),
         load_user_stats_url = URL('load_user_stats'),
-        get_user_species_url = URL('get_user_species')
+        get_user_species_url = URL('get_user_species'),
+        get_current_user_email_url=URL('get_current_user_email'),
     )
 
 @action('load_user_stats', method='GET')
@@ -274,3 +275,8 @@ def get_user_species():
 
     # Return the list of unique common names with their counts
     return dict(unique_species_data=unique_species_data)
+
+@action('get_current_user_email')
+@action.uses(auth.user)
+def get_current_user_email():
+    return get_user_email()

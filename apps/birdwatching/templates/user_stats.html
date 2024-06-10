@@ -1,42 +1,60 @@
 [[extend 'layout.html']]
 
 <div class="section" id="app">
-    <h1 class="title is-2">User Stats</h1>
-    <div class="buttons">
-        <button class="button is-info" @click="goToMyChecklists">My Checklists</button>
-        <button class="button is-primary" @click="goToIndex">Index</button>
-    </div>
     <div class="container">
-        <p>Last 30 Spotted Species</p>
-        <div id="map" style="height: 400px;"></div>
         <div class="columns">
             <div class="column is-half">
-                <h2 class="subtitle">Species Seen</h2>
-                <input v-model="searchCName" @input="filterSpecies" placeholder="Search for a species..." class="input mb-2" v-if="speciesData.length > 0">
-                <div style="max-height: 400px; overflow-y: auto;">
-                    <table class="table is-fullwidth is-striped" v-if="speciesData.length > 0">
-                        <thead>
-                            <tr>
-                                <th>Species Name</th>
-                                <th>Count</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="species in filteredCNames" :key="species.name">
-                                <td>{{ species.name }}</td>
-                                <td>{{ species.count }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <p v-else>No species seen yet.</p>
+                <div>
+                    <h1 class="title is-2">User Stats</h1>
+                    <p>User: {{ currentUserEmail }}</p>
+                    <div class="buttons">
+                        <button class="button is-info" @click="goToMyChecklists">My Checklists</button>
+                        <button class="button is-primary" @click="goToIndex">Index</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column is-half">
+                <div class="box" style="height: 420px;">
+                    <h2 class="subtitle">Species Seen</h2>
+                    <input v-model="searchCName" @input="filterSpecies" placeholder="Search for a species..." class="input mb-2" v-if="speciesData.length > 0">
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        <div class="table-container">
+                            <table class="table is-fullwidth is-striped" v-if="speciesData.length > 0">
+                                <thead>
+                                    <tr>
+                                        <th>Species Name</th>
+                                        <th>Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="species in filteredCNames" :key="species.name">
+                                        <td>{{ species.name }}</td>
+                                        <td>{{ species.count }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p v-else>No species seen yet.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="column is-half">
-                <h2 class="subtitle">Species Sightings Chart</h2>
-                <canvas id="speciesChart" v-if="speciesData.length > 0"></canvas>
-                <p v-else>No data to display.</p>
+                <div class="box" style="height: 420px;">
+                    <h2 class="subtitle">Species Sightings Chart</h2>
+                    <canvas id="speciesChart" v-if="speciesData.length > 0"></canvas>
+                    <p v-else>No data to display.</p>
+                </div>
             </div>
         </div>
+        <div class="columns">
+            <div class="column is-full">
+                <div class="box">
+                    <h2 class="subtitle">Map</h2>
+                    <div id="map" style="height: 400px;"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -48,6 +66,7 @@
     let get_species_url = "[[=XML(get_species_url)]]";
     let submit_checklist_url = "[[=XML(submit_checklist_url)]]";
     let get_user_species_url = "[[=XML(get_user_species_url)]]";
+    let get_current_user_email_url = "[[=XML(get_current_user_email_url)]]";
   </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="js/user_stats.js"></script>
