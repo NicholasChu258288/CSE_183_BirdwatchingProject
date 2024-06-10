@@ -57,8 +57,8 @@ let app = {
             
             // Ensure coord1 is not null or undefined
             if (!coord1) {
-                console.error("No coordinates found in local storage");
-                return;
+                console.warn("No coordinates found in local storage. Setting defualt coordinates.");
+                coord1 = '37, 37';
             }
 
             // Split coord1 to get latitude and longitude
@@ -76,6 +76,9 @@ let app = {
                 .then(response => {
                     if (response.data.success) {
                         console.log("Checklist submitted successfully");
+                        // Refresh the page
+                        location.reload();
+                        
                     } else {
                         console.error("Checklist submission failed");
                     }
