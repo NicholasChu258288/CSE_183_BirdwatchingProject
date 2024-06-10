@@ -254,7 +254,8 @@ def get_user_species():
 
     # Step 3: Query the `sightings` table for sightings matching these `SAMPLING_EVENT_IDENTIFIER` values
     sightings = db(db.sightings.SAMPLING_EVENT_IDENTIFIER.belongs(sampling_event_ids)).select(
-        db.sightings.COMMON_NAME, db.sightings.OBSERVATION_COUNT
+        db.sightings.COMMON_NAME, db.sightings.OBSERVATION_COUNT,
+        orderby=~db.sightings.OBSERVATION_COUNT  # Order by count descending
     )
 
     if not sightings:
@@ -273,8 +274,12 @@ def get_user_species():
     # Convert the dictionary to a list of dictionaries for easy JSON serialization
     unique_species_data = [{"name": name, "count": count} for name, count in species_count.items()]
 
+    # Sort the unique_species_data list alphabetically by species name
+    unique_species_data.sort(key=lambda x: x["name"])
+
     # Return the list of unique common names with their counts
     return dict(unique_species_data=unique_species_data)
+
 
 @action('get_current_user_email')
 @action.uses(auth.user)
