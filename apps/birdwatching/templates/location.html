@@ -4,13 +4,45 @@
 [v-cloak] {
     display: none;
 }
+.container {
+    display: flex;
+    flex-direction: column;
+    /* gap: 20px; */
+    width: 100%;
+}
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+}
 .box {
+    flex: 1;
     max-height: 400px; /* Adjust the height as needed */
     overflow-y: auto;
+    width: 50%; /* Adjust width for a balanced layout */
 }
+.chart-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%
 
+}
+.chart-container {
+    width: 100%;
+    height: 100%; /* Ensure the height is 100% */
+    /* position: relative; */
+}
+.canvas-wrapper {
+    width: 100%;
+    height: 100%; /* Ensure the canvas takes full height */
+}
+.table-wrapper {
+    overflow-x: auto;
+}
 </style>
-
 
 <div class="section" id="app" v-cloak>
     <h1 class="title">Location Statistics</h1>
@@ -20,51 +52,61 @@
     <br>
 
     <div class="container">
-        <p style="width:526px;">Welcome to the Location Statistics page. Here you can see the details of bird sightings in a selected region.</p>
+        <p>Welcome to the Location Statistics page. Here you can see the details of bird sightings in a selected region.</p>
     </div>
     <br>
 
-    <div class="box">
-        <h2>Species List</h2>
-        <table class="table is-striped">
-            <thead>
-                <tr>
-                    <th>Species</th>
-                    <th>Count</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="species in speciesList" :key="species.COMMON_NAME" @click="selectSpecies(species)" style="cursor: pointer">
-                    <td>{{ species.COMMON_NAME }}</td> 
-                    <td>{{ species.count }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <br>
-
-    <div class="box">
-        <h2>Sightings Over Time</h2>
-        <canvas id="sightingsChart"></canvas>
+    <div class="flex-row">
+        <div class="box">
+            <h2>Species List</h2>
+            <div class="table-wrapper">
+                <table class="table is-striped">
+                    <thead>
+                        <tr>
+                            <th>Species</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="species in speciesList" :key="species.COMMON_NAME" @click="selectSpecies(species)" style="cursor: pointer">
+                            <td>{{ species.COMMON_NAME }}</td> 
+                            <td>{{ species.count }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="box">
+            <h2>Sightings Over Time</h2>
+            <div class="chart-wrapper">
+                <div class="chart-container">
+                    <div class="canvas-wrapper">
+                        <canvas id="sightingsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <br>
 
     <div class="box">
         <h2>Top Contributors</h2>
-        <table class="table is-striped">
-            <thead>
-                <tr>
-                    <th></th>Contributor</th>
-                    <th>Count</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="contributor in topContributors" :key="contributor.user">
-                    <td>{{ contributor.user }}</td>
-                    <td>{{ contributor.count }}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-wrapper">
+            <table class="table is-striped">
+                <thead>
+                    <tr>
+                        <th>Contributor</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="contributor in topContributors" :key="contributor.user">
+                        <td>{{ contributor.user }}</td>
+                        <td>{{ contributor.count }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -73,7 +115,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    let get_species_url = "[[=URL('api/location_stats')]]";
+    let location_stats_url = "[[=URL('api/location_stats')]]";
     let get_sightings_over_time_url = "[[=URL('api/sightings_over_time')]]";
 </script>
 <script src="js/location.js"></script>

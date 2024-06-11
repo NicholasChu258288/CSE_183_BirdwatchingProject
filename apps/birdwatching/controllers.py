@@ -214,7 +214,7 @@ def location_stats():
 
     coord1 = list(map(float, coord1.strip('[]').split(',')))
     coord2 = list(map(float, coord2.strip('[]').split(',')))
-    print 
+    print
 
     species_data = db((db.checklists.LATITUDE >= min(coord1[0], coord2[0])) & 
                       (db.checklists.LATITUDE <= max(coord1[0], coord2[0])) &

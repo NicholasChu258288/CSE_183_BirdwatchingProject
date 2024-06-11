@@ -7,6 +7,7 @@ let app = {
             topContributors: [],
             selectedSpecies: null,
             chart: null // Add a property to hold the chart instance
+            
         };
     },
     methods: {
@@ -14,11 +15,17 @@ let app = {
             let coord1 = localStorage.getItem('coord1');
             let coord2 = localStorage.getItem('coord2');
 
+            // let c1 = coord1.split(',').map(parseFloat);f
+
+
             console.log('coord1', coord1);
             console.log('coord2', coord2);
-            console.log("Fetching location data with coordinates:", coord1, coord2);
+            // console.log("Fetching location data with coordinates:", c1, c2);
 
-            axios.get(get_species_url, {
+            // console.log("coordinate 1:",c1);
+            // console.log("coordinate2:", c2);
+
+            axios.get(location_stats_url, {
                 params: {
                     coord1: coord1,
                     coord2: coord2
@@ -29,8 +36,14 @@ let app = {
                     return;
                 }
                 console.log("Location data received:", response.data);
-                this.speciesList = response.data.species_list;
-                this.topContributors = response.data.top_contributors;
+                let species_list = response.data.species_list;
+                let top_contributors = response.data.top_contributors;
+                let sightings_data = response.data.sightings_data;
+                if (this.selectedSpecies) {
+                    this.fetchSightingsOverTime(this.selectedSpecies.COMMON_NAME);
+                } 
+                this.speciesList = species_list;
+                this.topContributors = top_contributors;
             }).catch(error => {
                 console.error("Error fetching location data:", error);
             });
@@ -70,6 +83,8 @@ let app = {
                     }]
                 },
                 options: {
+                    responsive: true, // Ensure the chart is responsive
+                    maintainAspectRatio: false, // Disable the default aspect ratio
                     scales: {
                         x: { title: { display: true, text: 'Date' }},
                         y: { title: { display: true, text: 'Count' }}
@@ -85,40 +100,5 @@ let app = {
         this.fetchLocationData();
     }
 };
-
-
-app.filterSightingsByRegion = function () {
-    let coord1 = JSON.parse(localStorage.getItem('coord1'));
-    let coord2 = JSON.parse(localStorage.getItem('coord2'));
-
-    // Filter species within the defined region
-    let filtered_species_data = app.species_data.filter(species => {
-        return app.sightings_reference[species.COMMON_NAME].some(coord => {
-            return (coord[0] >= Math.min(coord1[0], coord2[0]) && coord[0] <= Math.max(coord1[0], coord2[0]) &&
-                coord[1] >= Math.min(coord1[1], coord2[1]) && coord[1] <= Math.max(coord1[1], coord2[1]));
-        });
-    });
-
-    // Map the filtered species to get their common names
-    app.selected_species = filtered_species_data.map(species => species.COMMON_NAME);
-
-    // Filter sightings, checklists, and map data based on the selected species
-    app.sightings_data = app.sightings_data.filter(sighting => app.selected_species.includes(sighting.COMMON_NAME));
-    app.checklist_data = app.checklist_data.filter(checklist => {
-        return (checklist.LATITUDE >= Math.min(coord1[0], coord2[0]) && checklist.LATITUDE <= Math.max(coord1[0], coord2[0]) &&
-            checklist.LONGITUDE >= Math.min(coord1[1], coord2[1]) && checklist.LONGITUDE <= Math.max(coord1[1], coord2[1]));
-    });
-    app.map_data = app.map_data.filter(mapEntry => app.selected_species.includes(mapEntry.COMMON_NAME));
-
-    // Assign the new filtered data
-    app.species_data = filtered_species_data;
-
-    console.log("Filtered species data:", app.species_data);
-    console.log("Filtered sightings data:", app.sightings_data);
-    console.log("Filtered checklist data:", app.checklist_data);
-    console.log("Filtered map data:", app.map_data);
-    console.log("Selected species within region:", app.selected_species);
-};
-
 
 Vue.createApp(app).mount('#app');

@@ -4,22 +4,33 @@
 [v-cloak] {
     display: none;
 }
+.container {
+    width: 100%;
+    height: 900px; /* Make the container full height */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+#map {
+    flex: 1;
+    width: 100%; /* Make the map full width */
+    height: 100%; /* Make the map take up the full height of its container */
+}
 </style>
 
 <div class="section" id="app" v-cloak>
     <!-- Put here your Vue.js template -->
     <h1 class="title">Index</h1>
     
-    <h2 class="">Navigation</h2>
+    <h2>Navigation</h2>
     <div class="buttons">
         <button class="button is-primary" @click="enterChecklist">Checklist</button>
         <button class="button is-info" @click="enterLocation">Region Information</button>
     <br>
     </div>
     
-
     <div class="content">
-        <p style="width:526px;">Welcome to birdwatching.html, to get started you can select a rectangular region on the map by clicking two points.
+        <p>Welcome to birdwatching.html, to get started you can select a rectangular region on the map by clicking two points.
             Once you have your region selected you can press the "statistics on region" button to see the statistics of bird sightings
             in that region.</p>
     </div>
@@ -41,17 +52,16 @@
             </div>
         </div>
         
-        
         <div class="content">
             <input class="input" type="text" placeholder="Enter a Common Name" v-model="searchCName" @input="filterCommonNames()" @focus="displaySuggestions = true"></input> 
         </div>
         
         <div v-if="filteredCNames && displaySuggestions">
-                <div class="buttons" v-for="cName in filteredCNames" @click="setSeachCName(cName)">
-                    <button class="button is-light" @click="editSelectedSpecies(cName)">
-                        {{ cName }}
-                    </button>
-                </div>
+            <div class="buttons" v-for="cName in filteredCNames" @click="setSeachCName(cName)">
+                <button class="button is-light" @click="editSelectedSpecies(cName)">
+                    {{ cName }}
+                </button>
+            </div>
         </div>
     </div>
 </div>
