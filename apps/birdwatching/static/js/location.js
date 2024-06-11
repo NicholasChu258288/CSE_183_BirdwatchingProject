@@ -15,15 +15,8 @@ let app = {
             let coord1 = localStorage.getItem('coord1');
             let coord2 = localStorage.getItem('coord2');
 
-            // let c1 = coord1.split(',').map(parseFloat);f
-
-
-            console.log('coord1', coord1);
-            console.log('coord2', coord2);
-            // console.log("Fetching location data with coordinates:", c1, c2);
-
-            // console.log("coordinate 1:",c1);
-            // console.log("coordinate2:", c2);
+            console.log("coordinate 1:",coord1);
+            console.log("coordinate2:", coord2);
 
             axios.get(location_stats_url, {
                 params: {
@@ -44,6 +37,7 @@ let app = {
                 } 
                 this.speciesList = species_list;
                 this.topContributors = top_contributors;
+                console.log(this.speciesList)
             }).catch(error => {
                 console.error("Error fetching location data:", error);
             });
